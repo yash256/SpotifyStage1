@@ -34,7 +34,6 @@ public class ArtistDataAdapter extends ArrayAdapter<Artist> {
         }
         ImageView image=(ImageView) convertView.findViewById(R.id.artist_image);
         if(artist.images!=null && artist.images.size()>0){
-            Log.d("ArrayAdapter", "image not null");
             Picasso.with(con).load(artist.images.get(0).url).into(image);
         }
         TextView nameTv=(TextView) convertView.findViewById(R.id.artist_name_textview);
