@@ -1,6 +1,9 @@
 package com.udacitiy.nanodegree.spotifystage1;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -9,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +46,11 @@ public class TopTracksFragment extends Fragment {
         adapter=new TrackAdapter(getActivity(), tracks);
         ListView trackListview=(ListView) rootView.findViewById(R.id.top_tracks_listview);
         trackListview.setAdapter(adapter);
-        new SpotifyData().execute(artistId);
+        if(isNetworkConnected()) {
+            new SpotifyData().execute(artistId);
+        }else{
+            Toast.makeText(getActivity(), "No Internet available", Toast.LENGTH_SHORT).show();
+        }
         return rootView;
     }
     class SpotifyData extends AsyncTask<String, Void, List<Track>> {
@@ -73,5 +81,14 @@ public class TopTracksFragment extends Fragment {
                 Log.d(TAG, "No tracks");
             }
         }
+    }
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni == null) {
+            // There are no active networks.
+            return false;
+        } else
+            return true;
     }
 }
