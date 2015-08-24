@@ -5,4 +5,7 @@
     <string name="search">Search</string>
     <string name="title_activity_top_tracks">Top 10 Tracks</string>
     <string name="title_activity_main">Spotify Streamer</string>
+    <string name="title_activity_media_player">MediaPlayerActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

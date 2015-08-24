@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import java.util.Objects;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.AlbumSimple;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
 
@@ -46,6 +48,25 @@ public class TopTracksFragment extends Fragment {
         adapter=new TrackAdapter(getActivity(), tracks);
         ListView trackListview=(ListView) rootView.findViewById(R.id.top_tracks_listview);
         trackListview.setAdapter(adapter);
+        trackListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+                Track track=(Track) parent.getItemAtPosition(position);
+                String trackName=track.name;
+                String albumName=track.album.name;
+                AlbumSimple albumSimple=track.album;
+                String imageUrl="";
+                if(albumSimple.images!=null && albumSimple.images.size()>0) {
+                    imageUrl = albumSimple.images.get(0).url;
+                }
+                Intent intent=new Intent(getActivity(), MediaPlayerActivity.class);
+                intent.putExtra("TrackName", trackName);
+                intent.putExtra("AlbumName", albumName);
+                intent.putExtra("Image", imageUrl);
+                Log.d(TAG, "Image url= "+imageUrl);
+                startActivity(intent);
+            }
+        });
         if(isNetworkConnected()) {
             new SpotifyData().execute(artistId);
         }else{
