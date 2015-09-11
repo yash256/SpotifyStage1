@@ -12,11 +12,13 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 
 public class MediaPlayerActivity extends Activity {
 
     String artistName="Cold Play", albumName="Ghost Stories", track_name="A Sky Full of Stars", albumImage="";
-    TextView artistNameTv, albumNameTv, trackNameTv;
+    TextView artistNameTv, albumNameTv, trackNameTv, timeStart, timeRem;
     SeekBar seekBar;
     ImageView albumImageView;
     @Override
@@ -34,6 +36,10 @@ public class MediaPlayerActivity extends Activity {
         artistNameTv.setText(artistName);
         albumNameTv.setText(albumName);
         trackNameTv.setText(track_name);
+        timeStart=(TextView) findViewById(R.id.time_start);
+        timeRem=(TextView) findViewById(R.id.time_rem);
+        timeStart.setText("0:00");
+        timeRem.setText("5:00");
         if(!albumImage.equals("")){
             Picasso.with(this).load(albumImage).into(albumImageView);
         }
