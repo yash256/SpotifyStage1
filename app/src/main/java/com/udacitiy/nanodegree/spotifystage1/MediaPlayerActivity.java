@@ -2,10 +2,15 @@ package com.udacitiy.nanodegree.spotifystage1;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.support.v7.appcompat.*;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -14,37 +19,24 @@ import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+
 
 public class MediaPlayerActivity extends Activity {
 
-    String artistName="Cold Play", albumName="Ghost Stories", track_name="A Sky Full of Stars", albumImage="";
+    String artistName="Cold Play", albumName="Ghost Stories", track_name="A Sky Full of Stars", albumImage="", previewUrl;
     TextView artistNameTv, albumNameTv, trackNameTv, timeStart, timeRem;
     SeekBar seekBar;
     ImageView albumImageView;
+    MediaPlayer mediaPlayer;
+    ImageButton prev, playPause, next;
+    boolean isPlaying;
+    private final String TAG=MediaPlayerActivity.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_player);
-        Intent intent=getIntent();
-        track_name=intent.getStringExtra("TrackName");
-        albumName=intent.getStringExtra("AlbumName");
-        albumImage=intent.getStringExtra("Image");
-        artistNameTv=(TextView) findViewById(R.id.artist_name);
-        albumNameTv=(TextView) findViewById(R.id.album_name);
-        trackNameTv=(TextView) findViewById(R.id.track_name);
-        albumImageView=(ImageView) findViewById(R.id.album_image);
-        artistNameTv.setText(artistName);
-        albumNameTv.setText(albumName);
-        trackNameTv.setText(track_name);
-        timeStart=(TextView) findViewById(R.id.time_start);
-        timeRem=(TextView) findViewById(R.id.time_rem);
-        timeStart.setText("0:00");
-        timeRem.setText("5:00");
-        if(!albumImage.equals("")){
-            Picasso.with(this).load(albumImage).into(albumImageView);
-        }
-        seekBar=(SeekBar) findViewById(R.id.seekbar);
-        seekBar.setMax(550);
+
     }
 
     @Override
@@ -68,4 +60,6 @@ public class MediaPlayerActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

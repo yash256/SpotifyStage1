@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +27,7 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
 import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.TrackSimple;
 import kaaes.spotify.webapi.android.models.Tracks;
 
 
@@ -38,6 +41,7 @@ public class TopTracksFragment extends Fragment {
     public TopTracksFragment() {
 
     }
+    Tracks topTracks;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,15 +59,14 @@ public class TopTracksFragment extends Fragment {
                 String trackName=track.name;
                 String albumName=track.album.name;
                 AlbumSimple albumSimple=track.album;
+                String previewUrl=track.preview_url;
                 String imageUrl="";
                 if(albumSimple.images!=null && albumSimple.images.size()>0) {
                     imageUrl = albumSimple.images.get(0).url;
                 }
                 Intent intent=new Intent(getActivity(), MediaPlayerActivity.class);
-                intent.putExtra("TrackName", trackName);
-                intent.putExtra("AlbumName", albumName);
-                intent.putExtra("Image", imageUrl);
-                Log.d(TAG, "Image url= "+imageUrl);
+                intent.putExtra("Position", position);
+                intent.putParcelableArrayListExtra("TopTracks", (ArrayList) topTracks.tracks);
                 startActivity(intent);
             }
         });
@@ -81,13 +84,10 @@ public class TopTracksFragment extends Fragment {
             String id=params[0];
             SpotifyApi api=new SpotifyApi();
             SpotifyService service = api.getService();
-            Log.d(TAG, "Searching for artistId: "+artistId);
-            Map<String, Object> options=new HashMap<String, Object>();
-            options.put("country","US");
-            Tracks topTracks=service.getArtistTopTrack(artistId, options);
+            Log.d(TAG, "Searching for artistId: " + artistId);
+            topTracks=service.getArtistTopTrack(artistId, "US");
             for(int i=0;i<topTracks.tracks.size();i++){
                 Track track=topTracks.tracks.get(i);
-                Log.d(TAG, "Track name: " + track.name);
             }
             return topTracks.tracks;
         }
