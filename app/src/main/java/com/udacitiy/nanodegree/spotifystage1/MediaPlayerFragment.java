@@ -104,6 +104,7 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
             updateUI();
             seekPosition=-1;
             callMediaPlayerService();
+            isPlaying=true;
         }
         if(v.getId()==R.id.playpause){
             callMediaPlayerService();
@@ -125,6 +126,7 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
             updateUI();
             seekPosition=-1;
             callMediaPlayerService();
+            isPlaying=true;
         }
     }
 
@@ -181,6 +183,10 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
 
                 }
                 seekBarHandler.postDelayed(this, amountToUpdate);
+                if(seekBar.getProgress()>=duration){
+                    seekBar.setProgress(0);
+                    isPlaying=false;
+                }
             }
         });
     }
