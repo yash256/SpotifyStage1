@@ -26,6 +26,7 @@ import java.util.Objects;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
+import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TrackSimple;
 import kaaes.spotify.webapi.android.models.Tracks;
@@ -36,6 +37,7 @@ import kaaes.spotify.webapi.android.models.Tracks;
  */
 public class TopTracksFragment extends Fragment {
     String artistId;
+    String artistName;
     private final String TAG="TopTracksFragment";
     TrackAdapter adapter;
     public TopTracksFragment() {
@@ -66,6 +68,7 @@ public class TopTracksFragment extends Fragment {
                 }
                 Intent intent=new Intent(getActivity(), MediaPlayerActivity.class);
                 intent.putExtra("Position", position);
+                intent.putExtra("ArtistName", artistName);
                 intent.putParcelableArrayListExtra("TopTracks", (ArrayList) topTracks.tracks);
                 startActivity(intent);
             }
@@ -86,6 +89,9 @@ public class TopTracksFragment extends Fragment {
             SpotifyService service = api.getService();
             Log.d(TAG, "Searching for artistId: " + artistId);
             topTracks=service.getArtistTopTrack(artistId, "US");
+            Artist ar=service.getArtist(artistId);
+            artistName=ar.name;
+            Log.d(TAG, "Artist name="+artistName);
             for(int i=0;i<topTracks.tracks.size();i++){
                 Track track=topTracks.tracks.get(i);
             }

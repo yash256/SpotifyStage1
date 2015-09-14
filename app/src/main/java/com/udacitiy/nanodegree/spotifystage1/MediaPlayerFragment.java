@@ -3,11 +3,13 @@ package com.udacitiy.nanodegree.spotifystage1;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +29,7 @@ import kaaes.spotify.webapi.android.models.Track;
 
 public class MediaPlayerFragment extends Fragment implements View.OnClickListener{
 
-    String artistName="Cold Play", albumName="Ghost Stories", track_name="A Sky Full of Stars", albumImage="", previewUrl;
+    String artistName, albumName, track_name, albumImage="", previewUrl;
     TextView artistNameTv, albumNameTv, trackNameTv, timeStart, timeRem;
     SeekBar seekBar;
     ImageView albumImageView;
@@ -36,11 +38,15 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
     private final String TAG=MediaPlayerFragment.class.getSimpleName();
     ArrayList<Track> topTracks;
     int trackPosition;
+    Handler seekBarHandler;
+    int seekPosition;
+    boolean isPlaying;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.fragment_media_player, container, false);
         Intent intent=getActivity().getIntent();
+        artistName=intent.getStringExtra("ArtistName");
         topTracks=intent.getParcelableArrayListExtra("TopTracks");
         trackPosition=intent.getIntExtra("Position", 0);
         artistNameTv=(TextView) view.findViewById(R.id.artist_name);
@@ -48,21 +54,41 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
         trackNameTv=(TextView) view.findViewById(R.id.track_name);
         albumImageView=(ImageView) view.findViewById(R.id.album_image);
         updateStrings(trackPosition);
-        updateUI();
         timeStart=(TextView) view.findViewById(R.id.time_start);
         timeRem=(TextView) view.findViewById(R.id.time_rem);
-        timeStart.setText("0:00");
-        timeRem.setText("5:00");
         prev=(ImageButton) view.findViewById(R.id.previous);
         playPause=(ImageButton) view.findViewById(R.id.playpause);
         next=(ImageButton) view.findViewById(R.id.next);
         prev.setOnClickListener((View.OnClickListener) this);
         playPause.setOnClickListener((View.OnClickListener) this);
         next.setOnClickListener((View.OnClickListener) this);
+        seekBarHandler=new Handler();
         seekBar=(SeekBar) view.findViewById(R.id.seekbar);
-        seekBar.setMax(550);
-        seekBar.setMax(550);
+        seekBar.setMax(30000);
+        seekPosition=-1;
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser) {
+                    seekPosition = progress;
+                    callMediaPlayerService();
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        isPlaying=true;
+        updateUI();
         callMediaPlayerService();
+        updateSeekBar();
         return view;
     }
 
@@ -76,10 +102,18 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
             }
             updateStrings(trackPosition);
             updateUI();
+            seekPosition=-1;
             callMediaPlayerService();
         }
         if(v.getId()==R.id.playpause){
             callMediaPlayerService();
+            if(isPlaying){
+                isPlaying=false;
+                playPause.setImageResource(android.R.drawable.ic_media_play);
+            } else {
+                isPlaying=true;
+                playPause.setImageResource(android.R.drawable.ic_media_pause);
+            }
         }
         if(v.getId()==R.id.next){
             if(trackPosition==9){
@@ -89,6 +123,7 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
             }
             updateStrings(trackPosition);
             updateUI();
+            seekPosition=-1;
             callMediaPlayerService();
         }
     }
@@ -109,10 +144,45 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
         if(!albumImage.equals("")){
             Picasso.with(getActivity()).load(albumImage).into(albumImageView);
         }
+        seekBar.setProgress(0);
+        timeStart.setText("0:00");
+        timeRem.setText("0:30");
     }
     public void callMediaPlayerService(){
         Intent mediaPlayerService=new Intent(getActivity(), MediaPlayerService.class);
         mediaPlayerService.putExtra("PreviewUrl", previewUrl);
+        mediaPlayerService.putExtra("SeekPosition", seekPosition);
+        if(seekPosition>-1){
+            mediaPlayerService.putExtra("Seek", true);
+            seekBar.setProgress(seekPosition);
+        } else {
+            mediaPlayerService.putExtra("Seek", false);
+
+        }
+        seekPosition=-1;
         getActivity().startService(mediaPlayerService);
     }
+    public void updateSeekBar(){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int duration = 30000;
+                int amountToUpdate = 30;
+                if (!(seekBar.getProgress() >= duration) && isPlaying) {
+                    int p = seekBar.getProgress();
+                    p += amountToUpdate;
+                    int sec=p/1000;
+                    if(sec<=9){
+                        timeStart.setText("0:0"+sec);
+                    } else {
+                        timeStart.setText("0:"+sec);
+                    }
+                    seekBar.setProgress(p);
+
+                }
+                seekBarHandler.postDelayed(this, amountToUpdate);
+            }
+        });
+    }
+
 }

@@ -13,67 +13,80 @@
 
         <TextView
             android:id="@+id/artist_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"/>
         <TextView
             android:id="@+id/album_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_below="@+id/artist_name"/>
         <ImageView
             android:id="@+id/album_image"
-            android:layout_width="fill_parent"
-            android:layout_height="300dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
             android:layout_gravity="center_vertical"
-            android:layout_below="@+id/album_name"/>
+            android:layout_below="@+id/album_name"
+            android:layout_above="@+id/track_name"/>
         <TextView
             android:id="@+id/track_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_below="@+id/album_image"/>
+            android:layout_above="@+id/seekbar"/>
         <SeekBar
             android:id="@+id/seekbar"
             android:layout_width="fill_parent"
             android:layout_height="30dp"
-            android:layout_below="@+id/track_name"/>
+            android:layout_above="@+id/time_relative_layout"/>
+        <RelativeLayout
+            android:id="@+id/time_relative_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/media_buttons_rl">
         <TextView
             android:id="@+id/time_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/seekbar"/>
+            android:layout_alignParentLeft="true"
+            />
         <TextView
             android:id="@+id/time_rem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/media_buttons_rl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_below="@+id/seekbar"/>
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            >
         <ImageButton
             android:id="@+id/previous"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_media_previous"
-            android:layout_below="@+id/time_start"
-            android:layout_marginLeft="30dp"/>
+            />
         <ImageButton
             android:id="@+id/playpause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_media_play"
+            android:src="@android:drawable/ic_media_pause"
             android:layout_toRightOf="@+id/previous"
-            android:layout_below="@+id/time_start"
-            android:layout_marginLeft="50dp"/>
+            />
         <ImageButton
             android:id="@+id/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_media_next"
             android:layout_toRightOf="@+id/playpause"
-            android:layout_below="@+id/time_start"
-            android:layout_marginLeft="50dp"/>
-
+           />
+        </RelativeLayout>
     </RelativeLayout>
 
 

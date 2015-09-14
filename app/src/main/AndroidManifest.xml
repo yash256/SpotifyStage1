@@ -28,6 +28,7 @@
         </activity>
         <activity
             android:name=".MediaPlayerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_media_player" >
         </activity>
 
@@ -36,6 +37,7 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+
     </application>
 
 </manifest>
