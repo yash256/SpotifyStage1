@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -35,6 +36,10 @@ public class MainActivityFragment extends Fragment {
 
     private static ArtistDataAdapter adapter;
     private static final String TAG = "MaiActivityFragment";
+
+    public interface Callback{
+        public void onItemSelected(String artistId);
+    }
 
     public MainActivityFragment() {
     }
@@ -69,9 +74,7 @@ public class MainActivityFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Artist curAsrtist = (Artist) parent.getItemAtPosition(position);
                 String artistId = curAsrtist.id;
-                Intent intent = new Intent(getActivity(), TopTracks.class);
-                intent.putExtra("artistId", artistId);
-                startActivity(intent);
+                ((Callback) getActivity()).onItemSelected(artistId);
             }
         });
         return rootView;
@@ -83,7 +86,6 @@ public class MainActivityFragment extends Fragment {
         protected List<Artist> doInBackground(String... params) {
             String artistName = params[0];
             String type = params[1];
-            Log.d(TAG, "second param: " + type);
             SpotifyApi api = new SpotifyApi();
             SpotifyService service = api.getService();
             ArtistsPager results = service.searchArtists(artistName);
@@ -112,4 +114,5 @@ public class MainActivityFragment extends Fragment {
         } else
             return true;
     }
+
 }

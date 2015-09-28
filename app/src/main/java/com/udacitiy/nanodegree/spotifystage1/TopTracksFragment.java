@@ -1,5 +1,7 @@
 package com.udacitiy.nanodegree.spotifystage1;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -40,16 +42,28 @@ public class TopTracksFragment extends Fragment {
     String artistName;
     private final String TAG="TopTracksFragment";
     TrackAdapter adapter;
+    Tracks topTracks;
+
+    boolean isTwoPane;
     public TopTracksFragment() {
 
     }
-    Tracks topTracks;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView=inflater.inflate(R.layout.fragment_top_tracks, container, false);
-        artistId=getActivity().getIntent().getStringExtra("artistId");
+        if(getActivity().findViewById(R.id.fragment_main)!=null){
+            isTwoPane = true;
+        } else {
+            isTwoPane = false;
+        }
+        Bundle args = getArguments();
+        if(args==null){
+            return null;
+        } else {
+            artistId = args.getString("artistId");
+        }
         List<Track> tracks=new ArrayList<Track>();
         adapter=new TrackAdapter(getActivity(), tracks);
         ListView trackListview=(ListView) rootView.findViewById(R.id.top_tracks_listview);
@@ -66,11 +80,7 @@ public class TopTracksFragment extends Fragment {
                 if(albumSimple.images!=null && albumSimple.images.size()>0) {
                     imageUrl = albumSimple.images.get(0).url;
                 }
-                Intent intent=new Intent(getActivity(), MediaPlayerActivity.class);
-                intent.putExtra("Position", position);
-                intent.putExtra("ArtistName", artistName);
-                intent.putParcelableArrayListExtra("TopTracks", (ArrayList) topTracks.tracks);
-                startActivity(intent);
+                showDialog(position);
             }
         });
         if(isNetworkConnected()) {
@@ -87,11 +97,9 @@ public class TopTracksFragment extends Fragment {
             String id=params[0];
             SpotifyApi api=new SpotifyApi();
             SpotifyService service = api.getService();
-            Log.d(TAG, "Searching for artistId: " + artistId);
             topTracks=service.getArtistTopTrack(artistId, "US");
             Artist ar=service.getArtist(artistId);
             artistName=ar.name;
-            Log.d(TAG, "Artist name="+artistName);
             for(int i=0;i<topTracks.tracks.size();i++){
                 Track track=topTracks.tracks.get(i);
             }
@@ -99,9 +107,7 @@ public class TopTracksFragment extends Fragment {
         }
         @Override
         public void onPostExecute(List<Track> tracks){
-            Log.d(TAG,"onpostexecute");
             if(tracks!=null && tracks.size()>0){
-                Log.d(TAG,"tracks not null");
                 adapter.clear();
                 adapter.addAll(tracks);
             } else {
@@ -117,5 +123,25 @@ public class TopTracksFragment extends Fragment {
             return false;
         } else
             return true;
+    }
+    public void showDialog(int position){
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
+        MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
+        Bundle args= new Bundle();
+        args.putInt("Position", position);
+        args.putString("ArtistName", artistName);
+        args.putParcelableArrayList("TopTracks", (ArrayList) topTracks.tracks);
+        args.putBoolean("isTwoPane", isTwoPane);
+        mediaPlayerFragment.setArguments(args);
+        if(isTwoPane){
+            mediaPlayerFragment.show(fragmentManager, "dialog");
+        } else {
+            Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
+            intent.putExtra("Position", position);
+            intent.putExtra("ArtistName", artistName);
+            intent.putParcelableArrayListExtra("TopTracks", (ArrayList) topTracks.tracks);
+            intent.putExtra("isTwoPane", isTwoPane);
+            startActivity(intent);
+        }
     }
 }

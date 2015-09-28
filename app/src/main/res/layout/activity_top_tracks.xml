@@ -1,5 +1,13 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/fragment"
-    android:name="com.udacitiy.nanodegree.spotifystage1.TopTracksFragment"
-    tools:layout="@layout/fragment_top_tracks" android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/top_tracks_container"
+android:name="com.udacitiy.nanodegree.spotifystage1.TopTracksFragment"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:layout_marginLeft="16dp"
+android:layout_marginRight="16dp"
+tools:context="com.udacitiy.nanodegree.spotifystage1.TopTracksFragment"
+tools:layout="@layout/fragment_top_tracks" />
+
+
+

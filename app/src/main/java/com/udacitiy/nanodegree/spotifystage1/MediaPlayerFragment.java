@@ -1,6 +1,10 @@
 package com.udacitiy.nanodegree.spotifystage1;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -14,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -27,7 +32,7 @@ import java.util.ArrayList;
 import kaaes.spotify.webapi.android.models.Track;
 
 
-public class MediaPlayerFragment extends Fragment implements View.OnClickListener{
+public class MediaPlayerFragment extends DialogFragment implements View.OnClickListener{
 
     String artistName, albumName, track_name, albumImage="", previewUrl;
     TextView artistNameTv, albumNameTv, trackNameTv, timeStart, timeRem;
@@ -41,14 +46,24 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
     Handler seekBarHandler;
     int seekPosition;
     boolean isPlaying;
+    boolean isTwoPane;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.fragment_media_player, container, false);
-        Intent intent=getActivity().getIntent();
-        artistName=intent.getStringExtra("ArtistName");
-        topTracks=intent.getParcelableArrayListExtra("TopTracks");
-        trackPosition=intent.getIntExtra("Position", 0);
+        Bundle args = getArguments();
+        if(args!=null) {
+            artistName = args.getString("ArtistName");
+            topTracks = args.getParcelableArrayList("TopTracks");
+            trackPosition = args.getInt("Position");
+            isTwoPane = args.getBoolean("isTwoPane");
+        } else {
+            Intent intent = getActivity().getIntent();
+            artistName = intent.getStringExtra("ArtistName");
+            topTracks = intent.getParcelableArrayListExtra("TopTracks");
+            trackPosition = intent.getIntExtra("Position", 0);
+            isTwoPane = intent.getBooleanExtra("isTwoPane", false);
+        }
         artistNameTv=(TextView) view.findViewById(R.id.artist_name);
         albumNameTv=(TextView) view.findViewById(R.id.album_name);
         trackNameTv=(TextView) view.findViewById(R.id.track_name);
@@ -173,22 +188,21 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
                 if (!(seekBar.getProgress() >= duration) && isPlaying) {
                     int p = seekBar.getProgress();
                     p += amountToUpdate;
-                    int sec=p/1000;
-                    if(sec<=9){
-                        timeStart.setText("0:0"+sec);
+                    int sec = p / 1000;
+                    if (sec <= 9) {
+                        timeStart.setText("0:0" + sec);
                     } else {
-                        timeStart.setText("0:"+sec);
+                        timeStart.setText("0:" + sec);
                     }
                     seekBar.setProgress(p);
 
                 }
                 seekBarHandler.postDelayed(this, amountToUpdate);
-                if(seekBar.getProgress()>=duration){
+                if (seekBar.getProgress() >= duration) {
                     seekBar.setProgress(0);
-                    isPlaying=false;
+                    isPlaying = false;
                 }
             }
         });
     }
-
 }

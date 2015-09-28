@@ -76,7 +76,6 @@ public class ArtistDataFragment extends Fragment {
         protected List<Artist> doInBackground(String... params) {
             String artistName=params[0];
             String type=params[1];
-            Log.d(TAG, "second param: " + type);
             SpotifyApi api=new SpotifyApi();
             SpotifyService service=api.getService();
             ArtistsPager results=service.searchArtists(artistName);
