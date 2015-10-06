@@ -87,7 +87,13 @@ public class MainActivityFragment extends Fragment {
             String artistName = params[0];
             String type = params[1];
             SpotifyApi api = new SpotifyApi();
-            SpotifyService service = api.getService();
+            SpotifyService service;
+            try {
+                service = api.getService();
+            }catch (RetrofitError re){
+                Log.d(TAG, "RetrofitError in service, returning null");
+                return null;
+            }
             ArtistsPager results = service.searchArtists(artistName);
             List<Artist> artists = results.artists.items;
             return artists;

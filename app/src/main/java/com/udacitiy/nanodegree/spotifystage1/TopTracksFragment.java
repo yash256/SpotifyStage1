@@ -111,7 +111,7 @@ public class TopTracksFragment extends Fragment {
                 adapter.clear();
                 adapter.addAll(tracks);
             } else {
-                Log.d(TAG, "No tracks");
+                Toast.makeText(getActivity(), "No tracks available", Toast.LENGTH_LONG).show();
             }
         }
     }

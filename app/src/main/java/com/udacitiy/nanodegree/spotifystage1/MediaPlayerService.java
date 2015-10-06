@@ -34,6 +34,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
+        if(intent==null){
+            return -1;
+        }
         String previewUrl = intent.getStringExtra("PreviewUrl");
         boolean seek = intent.getBooleanExtra("Seek", false);
         seekPosition = intent.getIntExtra("SeekPosition", -1);
